@@ -15,8 +15,8 @@ function fetchCountries(name) {
     .then(countries => {
       showCountries(countries);
     })
-    .catch(() => {
-      Notiflix.Notify.failure('Oops, there is no country with that name');
+    .catch((err) => {
+      Notiflix.Notify.failure(`${err}`);
       clearCountries();
     });
 }
