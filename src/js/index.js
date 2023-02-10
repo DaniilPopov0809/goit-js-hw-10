@@ -1,6 +1,9 @@
 import '../css/styles.css';
-import { fetchCountries } from './fetchCountries.js';
+// import { fetchCountries } from './fetch-countries.js';
 import Notiflix from 'notiflix';
+import cardCountryTpl from '../tamplates/card-country.hbs';
+import listCountriesTpl from '../tamplates/card-list-country.hbs';
+import getCountries from './fetch-countries.js';
 
 const debounce = require('lodash.debounce');
 const DEBOUNCE_DELAY = 300;
@@ -16,7 +19,14 @@ function onFindCountry(event) {
   if (nameCountry.trim() === '') {
     Notiflix.Notify.info('Enter country.');
   } else {
-    fetchCountries(nameCountry);
+      getCountries(nameCountry)
+      .then(countries => {
+        showCountries(countries);
+      })
+      .catch(err => {
+        Notiflix.Notify.failure(`${err}`);
+        clearCountries();
+      });
   }
 }
 
@@ -41,36 +51,13 @@ function clearCountries() {
 }
 
 function createCardCountry(countriesArr) {
-  const languagesObj = countriesArr[0].languages;
-  const strLanguages = languageToString(languagesObj);
-
-  countryInfoContainer.innerHTML = `<div class='country-info__container'>
-      <img src=${countriesArr[0].flags.svg} alt="Flag country" width=40px>
-      <h1 class = 'country-info__title'>${countriesArr[0].name.official}</h1>
-      </div>
-      <p class = 'country-info__item'>Capital:<span class='country-info__data'>${countriesArr[0].capital}</span></p>
-      <p class = 'country-info__item'>Population:<span class='country-info__data'>${countriesArr[0].population}</span></p>  
-      <p class = 'country-info__item'>Language:<span class='country-info__data'>${strLanguages}</span></p>
-      `;
+  const countryObj = Object.assign({}, countriesArr[0]);
+  countryObj.languages = languageToString(countryObj.languages);
+  countryInfoContainer.innerHTML = cardCountryTpl(countryObj);
 }
 
 function createListCountries(countriesArr) {
-  for (
-    let indexCountry = 0;
-    indexCountry < countriesArr.length;
-    indexCountry++
-  ) {
-    let currentName = countriesArr[indexCountry].name.official;
-    let currentFlag = countriesArr[indexCountry].flags.svg;
-
-    countryListContainer.insertAdjacentHTML(
-      'beforeend',
-      `<li class = 'country-list__item'>
-          <img src=${currentFlag} alt="Flag country" width=40px>
-          <span class = 'country-list__country-name'>${currentName}</span>
-          </li>`
-    );
-  }
+  countryListContainer.innerHTML = listCountriesTpl(countriesArr);
 }
 
 function languageToString(objLanguages) {
