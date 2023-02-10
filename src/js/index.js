@@ -1,5 +1,4 @@
 import '../css/styles.css';
-// import { fetchCountries } from './fetch-countries.js';
 import Notiflix from 'notiflix';
 import cardCountryTpl from '../tamplates/card-country.hbs';
 import listCountriesTpl from '../tamplates/card-list-country.hbs';
@@ -68,5 +67,3 @@ function languageToString(objLanguages) {
   }
   return languagesArr.join(', ');
 }
-
-export { showCountries, clearCountries };
